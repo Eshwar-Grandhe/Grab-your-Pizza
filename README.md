@@ -11,7 +11,8 @@
 - After Successfully installing all the required softwares open the command prompt.
 - The frontend and backend are divided into two folders and are required to run seperately 
 - Initialse the backend data, import to MongoDB using data folder
-- Open the ENV file and place your URL to connect to the database
+- Create an ENV file and place your URL to connect to the database
+    `URL=your_url_goes_here`
 - Open the command prompt in the backend folder and run the following command
     `go run main.go`
 - Open a new command prompt in the front end folder
