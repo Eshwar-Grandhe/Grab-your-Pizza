@@ -11,9 +11,8 @@ class BuildUrPizza extends React.Component {
             checkingredients:[],
             i:[]
         }
-      
+        
     }
-    
     changeCheckingredients(ingredients){
         this.setState({
             checkingredients:ingredients
@@ -25,6 +24,7 @@ class BuildUrPizza extends React.Component {
         })
     }
     onHandle=(pos)=>{
+        var obj={Name:this.state.ingredients[pos].tname,Price:this.state.ingredients[pos].price,Quantity:1,Image:this.state.ingredients[pos].Image}
         const updated = this.state.checkingredients.map((item, index) =>
         index === pos ? !item : item
       );
@@ -42,6 +42,9 @@ class BuildUrPizza extends React.Component {
       );
   
       this.changeTotal(totalPrice);
+      axios.post("http://localhost:5000/build",obj).then((res)=>{
+                console.log(res)              
+    }).catch((err)=>{console.log(err)})
     }
     componentDidMount(){
         axios.get('http://localhost:5000/getingredients')
@@ -68,7 +71,7 @@ class BuildUrPizza extends React.Component {
             return (
                 <tr>
                     <td><img src={d.Image} style={{height:'30px', width:'30px'}}/></td>
-                    <td>{d.tname}&nbsp; &nbsp;${d.price}.00</td>
+                    <td >{d.tname}&nbsp; &nbsp;${d.price}.00</td>
                     <td><input type='checkbox' checked={this.state.checkingredients[index]} onChange={()=>{this.onHandle(index)}}/>&nbsp;Add</td>
                 </tr>
                 )})
@@ -79,20 +82,17 @@ class BuildUrPizza extends React.Component {
                 <div className='row' style={{ margin: '100px' }} >
                     <table class="table table-bordered" style={{marginleft: '200px', Width:'50px',marginright: '200px' }}>
                         <tbody>
+                            
                             {op}
-                            </tbody>
+                
+                            </tbody>                        
                     </table>
                     <h6 style={{textAlign:'left'}}>Total Cart: {this.state.total}</h6>
                     <div >
                         <br/>
-                        <button type="button" class="btn btn-warning" onClick={() => {
-                                                axios.post("http://localhost:5000/addtocart", { ...op })
-                                                    .then((response) => {
-                                                   console.log(op) })
-                                                    .catch((err) => {
-                                                        console.log(err)
-                                                    });
-                                            }}>Build Ur pizza</button>
+                        <button type="button" class="btn btn-warning" onClick={()=>{
+                                        this.props.history.push("/Cart")
+                        }}>Build Ur pizza</button>
                     </div> &nbsp;
                 
                 </div>
@@ -100,7 +100,9 @@ class BuildUrPizza extends React.Component {
                 <Cart total={this.state.total}/>
                 </div>
                 
-            </div > 
+            </div >
+           
+            
     );
     
     }
