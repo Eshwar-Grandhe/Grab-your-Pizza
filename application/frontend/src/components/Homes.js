@@ -2,11 +2,40 @@ import React from 'react'
 import IngredientsLogo from '../images/IngredientsLogo.jpg'
 import ChefLogo from '../images/ChefLogo.jpg'
 import TimeLogo from '../images/TimeLogo.jpg'
-export default function Homes() {
+import react from 'react'
+import axios from 'axios';
+
+export default class Cart extends react.Component {
+    constructor(props)
+    {
+        super();
+    }
+    render(){
+        let btn;
+        if(localStorage.getItem("loggedIn") === "1")
+        {
+            btn = <button style={{ float: 'right' }} type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="bottom" title="Shopping Cart" onClick={() => {axios.get("http://localhost:5000/logout")
+            .then((res) => {
+                this.props.history.push("/Homes")
+            }).catch((err) => {
+                console.log(err)
+            })
+            localStorage.clear() }} >
+            Logout
+        </button>
+        }
+        else{
+            btn =   <button style={{ float: 'right' }} type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="bottom" title="Shopping Cart" onClick={() => { this.props.history.push("./Login")}} >
+            Login
+        </button>
+        }
     return (
         <div>
+            <br/>
+            
+            {btn}
             <br />
-            <h1 style={{textAlign:'center'}}> Our Story</h1> <br />
+            <h1 style={{ textAlign: 'center' }}> Our Story</h1> <br />
             <div class='Home'>
                 <p > We believe in good. We launched Fresh Pan Pizza Best Excuse Awards on our Facebook fan page. Fans were given situations where they had to come up
                     with wacky and fun excuses. The person with the best excuse won the Best Excuse Badge and won Pizzeria’s vouchers. Their enthusiastic response proved
@@ -23,7 +52,7 @@ export default function Homes() {
                         <img src={IngredientsLogo} width='400' height='200' />
                     </div>
                     <div class='content'>
-                    <br/>
+                        <br />
                         <h2>Ingredients</h2>
                         <p>
                             We're ruthless about goodness. We have no qualms about tearing up a day-old
@@ -37,7 +66,7 @@ export default function Homes() {
                 <div class='container'>
 
                     <div class='content'>
-                    <br/>
+                        <br />
                         <h2>Our Chefs</h2>
                         <p>
                             They make sauces sing and salads dance. They create magic with skill,
@@ -51,19 +80,19 @@ export default function Homes() {
                         <img src={ChefLogo} width='400' height='200' />
                     </div>
                 </div>
-                
+
                 <div class='container'>
                     <div class="image">
-                        <img src={ TimeLogo} width='400' height='200' />
+                        <img src={TimeLogo} width='400' height='200' />
                     </div>
                     <div class='content'>
-                        <br/>
+                        <br />
                         <h2>  45 min Delivery</h2>
                     </div>
-                   
+
                 </div>
             </div>
         </div>
 
     )
-}
+}}
