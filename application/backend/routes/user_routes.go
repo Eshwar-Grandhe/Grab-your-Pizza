@@ -39,4 +39,7 @@ func UserRoute(app *fiber.App) {
 
 	// Delete from cart
 	app.Post("/deletefromcart", controllers.DeleteFromCart)
+
+	// Build
+	app.Post("/build", controllers.BuildPizza)
 }
