@@ -28,9 +28,6 @@ export default function Navbar() {
                         <li className="nav-item">
                             <a className="nav-link" href="./BuildUrPizza">Build Ur Pizza</a>
                         </li>
-                        <li className="nav-item ml-auto">
-                            <a className="nav-link" href="./Login">login</a>
-                        </li>
                     </ul>
 
                 </div>
