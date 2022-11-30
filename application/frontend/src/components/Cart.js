@@ -25,83 +25,57 @@ export default class Cart extends react.Component {
                 console.log(err)
             })
     };
-    totalPrice = () =>{
-        if(this.state.cart)
-        this.state.cart.reduce(
-            (sum, cart) => sum + cart.quantity * cart.price,
-            0
-        )
-        else
-        return 0;
-    }
+    totalPrice = () => {
 
-    incrementCount(pizza, index) {
-        const items = this.state.cart;
-        pizza.quantity += 1;
-        items.splice(index, 1, pizza);
-        this.setState({
-            itemsList: items
-        });
-    }
-    decrementCount(pizza, index) {
 
-        const items = this.state.cart;
-        pizza.quantity -= 1;
-        if (pizza.quantity <= 0) {
-            alert('item quantity can"t be lessthan 1')
-        } else {
-            items.splice(index, 1, pizza);
-            this.setState({
-                itemsList: items
-            });
+        if (this.state.cart) {
+            let temp = 0;
+            for (var i = 0; i < this.state.cart.length; i++) {
+                temp += this.state.cart[i].price
+            }
+            return temp
         }
-
+        else
+            return 0;
     }
+
 
     render() {
         var op;
-        if(this.state.cart !== null)
-        {
-         op = this.state.cart.map((pizza, index) => {
-            return (
-                <tr>
-                    <td><img src={pizza.Image} style={{ height: '30px', width: '30px' }} /></td>
-                    <td>{pizza.name}</td>
-                    <td>
-                        <button className="btn btn-default btn-sm" style={{ border: '1px solid orange' }}
-                            onClick={() => this.decrementCount(pizza, index)}>-
-                        </button>
+        if (this.state.cart !== null) {
+            op = this.state.cart.map((pizza, index) => {
+                return (
+                    <tr>
+                        <td><img src={pizza.Image} style={{ height: '30px', width: '30px' }} /></td>
+                        <td>{pizza.name}</td>
+                        <td>
 
-                        &nbsp;&nbsp;
-                        {pizza.quantity}
-                        &nbsp;&nbsp;
+                            &nbsp;&nbsp;
+                            {pizza.quantity}
+                            &nbsp;&nbsp;
+                        </td>
+                        <td>
+                            {this.state.total = pizza.quantity * pizza.price}
+                        </td>
+                        <td>
+                            <button class="btn btn-warning" onClick={() => {
+                                axios.post("http://localhost:5000/deletefromcart", pizza)
+                                    .then((responce) => { })
+                                    .catch((err) => {
+                                        console.log(err)
+                                    });
+                            }
+                            }> Delete Item
+                            </button>
+                        </td>
 
-                        <button className="btn btn-default btn-sm" style={{ border: '1px solid orange' }}
-                            onClick={() => this.incrementCount(pizza, index)}>+
-                        </button>
-                    </td>
-                    <td>
-                        {this.state.total = pizza.quantity * pizza.price}
-                    </td>
-                    <td>
-                        <button class="btn btn-warning" onClick={() => {
-                            axios.post("http://localhost:5000/deletefromcart", pizza)
-                                .then((responce) => { })
-                                .catch((err) => {
-                                    console.log(err)
-                                });
-                        }
-                        }> Delete Item
-                        </button>
-                    </td>
-
-                </tr>
-            )
-        })
-    }
-    else{
-        op = <div><h1>Nothing in the Cart!</h1></div>
-    }
+                    </tr>
+                )
+            })
+        }
+        else {
+            op = <div><h1>Nothing in the Cart!</h1></div>
+        }
         return (
 
             <div style={{ margin: '70px', textAlign: "center", border: '1px solid yellow' }}>
@@ -127,8 +101,8 @@ export default class Cart extends react.Component {
                     <div className='Bill' style={{ textAlign: 'left' }}>
                         <h2>Bill:</h2>
                         <hr />
-                        <h6>Order Pizza :&nbsp;&nbsp;&#x20b9;{this.totalPrice()}</h6>
-                        <h6>Total Cart :&nbsp;&nbsp;&#x20b9;{ this.totalPrice()}</h6>
+                        <h6>Order Pizza :${this.totalPrice()}</h6>
+                        <h6>Total Cart :${this.totalPrice()}</h6>
                     </div>
 
                     <div >
@@ -142,7 +116,7 @@ export default class Cart extends react.Component {
                         }}>
                             Menu</button>
                     </div> &nbsp;
-                    
+
                 </div>
             </div >
         );
