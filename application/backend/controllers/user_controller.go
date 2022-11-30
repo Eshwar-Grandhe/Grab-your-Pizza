@@ -4,15 +4,16 @@ import (
 	"context"
 	"fiber-api/config"
 	"fiber-api/model"
+	"fmt"
 	"net/http"
 	"time"
-	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Sample route for testing 
+// Sample route for testing
 func Sample(c *fiber.Ctx) error {
 
 	fmt.Println("Inside User route")
@@ -74,7 +75,7 @@ func GetAllUsers(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(users)
 }
 
-// Fetch pizza menu 
+// Fetch pizza menu
 func GetMenu(c *fiber.Ctx) error {
 
 	fmt.Println("Inside Get menu route")
@@ -187,7 +188,9 @@ func Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&loginuserdata); err != nil {
 		return c.JSON(&fiber.Map{"data": "error body parsing"})
 	}
-	// authenticate users here 
+	fmt.Println(loginuserdata.Name)
+	fmt.Println(loginuserdata.Password)
+	// authenticate users here
 	for i := 0; i < len(users); i++ {
 		if users[i].Name == loginuserdata.Name && users[i].Password == loginuserdata.Password {
 			return c.Status(http.StatusOK).JSON(&fiber.Map{"data": 1})
@@ -205,15 +208,15 @@ func LogoutUser(c *fiber.Ctx) error {
 
 	defer cancel()
 
-	result, err := CartCollection.DeleteOne(ctx, bson.M{})
-    if err != nil {
-        return c.Status(http.StatusInternalServerError).JSON(&fiber.Map{"data": result})
-    }
+	result, err := CartCollection.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(&fiber.Map{"data": result})
+	}
 
 	return c.Status(http.StatusOK).JSON(&fiber.Map{"data": 1})
 }
 
-// Retrive all the ingredients 
+// Retrive all the ingredients
 func GetIngredients(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var IngredientsCollection *mongo.Collection = config.GetCollection(config.DB, "ingredientsdata")
@@ -241,7 +244,7 @@ func GetIngredients(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(ingredients)
 }
 
-// Delete from cart 
+// Delete from cart
 func DeleteFromCart(c *fiber.Ctx) error {
 	fmt.Println("Inside delete from cart route")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -253,9 +256,36 @@ func DeleteFromCart(c *fiber.Ctx) error {
 
 	}
 	result, err := CartCollection.DeleteOne(ctx, bson.M{"name": pizza.Name})
-    if err != nil {
-        return c.Status(http.StatusInternalServerError).JSON(&fiber.Map{"data": result})
-    }
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(&fiber.Map{"data": result})
+	}
 
 	return c.Status(http.StatusOK).JSON(&fiber.Map{"data": 1})
+}
+
+// build api endpoint
+func BuildPizza(c *fiber.Ctx) error {
+	fmt.Println("Inside Build route")
+	var BuilCollection *mongo.Collection = config.GetCollection(config.DB, "cart")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var pizza model.Build
+	defer cancel()
+	if err := c.BodyParser(&pizza); err != nil {
+		return c.JSON(&fiber.Map{"data": "error body parsing"})
+
+	}
+	fmt.Println(pizza.Name)
+	fmt.Println(pizza.Price)
+	newPizza := model.Build{
+		Image:    pizza.Image,
+		Name:     pizza.Name,
+		Price:    pizza.Price,
+		Quantity: pizza.Quantity,
+	}
+	result, err := BuilCollection.InsertOne(ctx, newPizza)
+	if err != nil {
+		return c.JSON(&fiber.Map{"data": "error in insertion to db"})
+	}
+
+	return c.JSON(result)
 }
